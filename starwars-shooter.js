@@ -398,11 +398,12 @@ class StarWarsShooter {
             }
         });
 
-        // Left-click for lightsaber cutting
+        // Left-click disabled to reduce distraction
+        // Users can still use right-click for blaster shots
         this.gameContainer.addEventListener('click', (e) => {
             if (this.isActive) {
                 e.preventDefault();
-                this.createLightsaberCut(e.clientX, e.clientY);
+                // Removed lightsaber cut effect to reduce distraction
             }
         });
 

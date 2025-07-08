@@ -318,6 +318,156 @@
         .main-content.crawl-active {
             transform: translateY(0);
         }
+        
+        /* Feedback System Styles */
+        .feedback-container {
+            position: fixed;
+            bottom: 200px;
+            right: 80px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 400px;
+            width: 350px;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .feedback-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .feedback-title {
+            color: #ffd700;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            text-shadow: 0 0 10px #ffd700;
+        }
+        
+        .feedback-subtitle {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .feedback-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .feedback-btn {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .feedback-btn:hover {
+            background: rgba(255, 215, 0, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+        
+        .feedback-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .feedback-display {
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            padding-top: 15px;
+        }
+        
+        .feedback-display h4 {
+            color: #ffd700;
+            font-size: 1rem;
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+        
+        .feedback-messages {
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .feedback-message {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #fff;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .feedback-message .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        
+        .feedback-message .time {
+            color: #ccc;
+            font-size: 0.7rem;
+            float: right;
+        }
+        
+        .loading-message {
+            color: #ccc;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .feedback-container {
+                bottom: 150px;
+                right: 30px;
+                width: 300px;
+                padding: 15px;
+            }
+            
+            .feedback-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .feedback-btn {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .feedback-container {
+                bottom: 120px;
+                right: 20px;
+                width: 280px;
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen">
@@ -346,7 +496,7 @@
             Still here... but not for long! 😅
         </p>
         <p class="text-sm text-cyan-400 mt-2">
-            💡 Click buttons for lightsabers • Right-click for blasters • Space for lightning
+            💡 Right-click for blasters • Space for lightning • Buttons for effects
         </p>
     </div>
     
@@ -524,6 +674,42 @@
         <div class="crawl-speed-value" id="speed-value">1x</div>
     </div>
     
+    <!-- Feedback System -->
+    <div class="feedback-container" id="feedback-container">
+        <div class="feedback-header">
+            <h3 class="feedback-title">💪 Support the Hero's Journey!</h3>
+            <p class="feedback-subtitle">Send encouragement to help them reach freedom!</p>
+        </div>
+        
+        <div class="feedback-options">
+            <button class="feedback-btn" onclick="sendFeedback('You can do it!', '💪')">
+                💪 You can do it!
+            </button>
+            <button class="feedback-btn" onclick="sendFeedback('Just a little more!', '🎯')">
+                🎯 Just a little more!
+            </button>
+            <button class="feedback-btn" onclick="sendFeedback('Stay strong!', '💪')">
+                💪 Stay strong!
+            </button>
+            <button class="feedback-btn" onclick="sendFeedback('Freedom awaits!', '🚀')">
+                🚀 Freedom awaits!
+            </button>
+            <button class="feedback-btn" onclick="sendFeedback('Almost there!', '🎉')">
+                🎉 Almost there!
+            </button>
+            <button class="feedback-btn" onclick="sendFeedback('You got this!', '🔥')">
+                🔥 You got this!
+            </button>
+        </div>
+        
+        <div class="feedback-display" id="feedback-display">
+            <h4>Recent Encouragement:</h4>
+            <div class="feedback-messages" id="feedback-messages">
+                <div class="loading-message">Loading messages...</div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Audio -->
     <audio id="countdown-sound" src="countdown.mp3"></audio>
     
@@ -532,6 +718,42 @@
     
     <!-- Star Wars Shooter Game Script -->
     <script src="starwars-shooter.js"></script>
+    
+    <!-- Firebase SDK -->
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, onSnapshot, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBP7qurHWriSXWsFov3PMnV62UYgjgX9QY",
+          authDomain: "countdown-page-80bca.firebaseapp.com",
+          projectId: "countdown-page-80bca",
+          storageBucket: "countdown-page-80bca.firebasestorage.app",
+          messagingSenderId: "314955692260",
+          appId: "1:314955692260:web:39f2896943461a0f22d4f1",
+          measurementId: "G-GK8YEDD1QK"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // Make Firebase functions available globally
+        window.db = db;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        window.onSnapshot = onSnapshot;
+        window.orderBy = orderBy;
+        window.limit = limit;
+        window.serverTimestamp = serverTimestamp;
+      </script>
+
     
     <script>
         // Set target time to July 9th, 2025 at 18:00 (6:00 PM) Sofia time (UTC+3)
@@ -1037,6 +1259,174 @@
                 setTimeout(() => particle.remove(), 3000);
             }
         });
+        
+        // Feedback System Functions
+        async function sendFeedback(message, emoji) {
+            try {
+                // Check if Firebase is initialized
+                if (!window.db) {
+                    console.log('Firebase not initialized, using local storage fallback');
+                    saveFeedbackLocally(message, emoji);
+                    return;
+                }
+                
+                // Add feedback to Firebase
+                const docRef = await window.addDoc(window.collection(window.db, "feedback"), {
+                    message: message,
+                    emoji: emoji,
+                    timestamp: window.serverTimestamp(),
+                    userAgent: navigator.userAgent.substring(0, 100) // Store partial user agent for analytics
+                });
+                
+                console.log("Feedback sent with ID: ", docRef.id);
+                
+                // Show success animation
+                showFeedbackSuccess();
+                
+            } catch (error) {
+                console.error("Error sending feedback: ", error);
+                // Fallback to local storage
+                saveFeedbackLocally(message, emoji);
+            }
+        }
+        
+        function saveFeedbackLocally(message, emoji) {
+            const feedback = {
+                message: message,
+                emoji: emoji,
+                timestamp: new Date().toISOString(),
+                id: Date.now()
+            };
+            
+            // Get existing feedback from localStorage
+            let localFeedback = JSON.parse(localStorage.getItem('countdownFeedback') || '[]');
+            localFeedback.push(feedback);
+            
+            // Keep only last 20 messages
+            if (localFeedback.length > 20) {
+                localFeedback = localFeedback.slice(-20);
+            }
+            
+            localStorage.setItem('countdownFeedback', JSON.stringify(localFeedback));
+            
+            // Update display
+            displayFeedback(localFeedback);
+            showFeedbackSuccess();
+        }
+        
+        function showFeedbackSuccess() {
+            // Create a temporary success message
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 255, 0, 0.9);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                z-index: 1000;
+                font-size: 1.2rem;
+                animation: fadeInOut 2s ease-in-out;
+            `;
+            successMsg.textContent = '💪 Feedback sent!';
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => successMsg.remove(), 2000);
+        }
+        
+        function displayFeedback(feedbackArray) {
+            const messagesContainer = document.getElementById('feedback-messages');
+            if (!messagesContainer) return;
+            
+            // Clear loading message
+            messagesContainer.innerHTML = '';
+            
+            if (feedbackArray.length === 0) {
+                messagesContainer.innerHTML = '<div class="loading-message">No messages yet. Be the first to encourage!</div>';
+                return;
+            }
+            
+            // Display messages (most recent first)
+            feedbackArray.reverse().forEach(feedback => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'feedback-message';
+                
+                const time = new Date(feedback.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                messageDiv.innerHTML = `
+                    <span class="emoji">${feedback.emoji}</span>
+                    <span class="message">${feedback.message}</span>
+                    <span class="time">${time}</span>
+                `;
+                
+                messagesContainer.appendChild(messageDiv);
+            });
+        }
+        
+        function loadFeedback() {
+            // Try to load from Firebase first
+            if (window.db) {
+                try {
+                    const q = window.collection(window.db, "feedback");
+                    const unsubscribe = window.onSnapshot(q, (querySnapshot) => {
+                        const feedback = [];
+                        querySnapshot.forEach((doc) => {
+                            feedback.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        });
+                        
+                        // Sort by timestamp (most recent first)
+                        feedback.sort((a, b) => {
+                            if (a.timestamp && b.timestamp) {
+                                return b.timestamp.toDate() - a.timestamp.toDate();
+                            }
+                            return 0;
+                        });
+                        
+                        displayFeedback(feedback);
+                    }, (error) => {
+                        console.error("Error loading feedback from Firebase:", error);
+                        // Fallback to local storage
+                        loadLocalFeedback();
+                    });
+                    
+                    // Store unsubscribe function for cleanup
+                    window.feedbackUnsubscribe = unsubscribe;
+                    
+                } catch (error) {
+                    console.error("Firebase error, using local storage:", error);
+                    loadLocalFeedback();
+                }
+            } else {
+                // Firebase not available, use local storage
+                loadLocalFeedback();
+            }
+        }
+        
+        function loadLocalFeedback() {
+            const localFeedback = JSON.parse(localStorage.getItem('countdownFeedback') || '[]');
+            displayFeedback(localFeedback);
+        }
+        
+        // Initialize feedback system
+        setTimeout(() => {
+            loadFeedback();
+        }, 2000); // Wait for Firebase to initialize
+        
+        // Add CSS for success animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

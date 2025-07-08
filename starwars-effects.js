@@ -376,48 +376,14 @@ class StarWarsEffects {
 
     // Add Star Wars effects to existing buttons
     addStarWarsToButtons() {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Add lightsaber effect
-                setTimeout(() => {
-                    const rect = button.getBoundingClientRect();
-                    const x = rect.left + rect.width / 2;
-                    const y = rect.top + rect.height / 2;
-                    this.createLightsaber(x, y, 'green');
-                }, 100);
-            });
-        });
+        // Removed lightsaber effects on button clicks to reduce distraction
+        // Buttons will still work normally without the lightsaber animations
     }
     
     // Add advanced lightsaber effects
     addAdvancedLightsaberEffects() {
-        // Create multiple lightsabers for more dramatic effect
-        document.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
-                // Create a sequence of lightsabers for more realistic combat
-                const colors = ['green', 'blue', 'red', 'purple'];
-                const rect = e.target.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                // Create main lightsaber
-                this.createLightsaber(centerX, centerY, colors[Math.floor(Math.random() * colors.length)]);
-                
-                // Create follow-up lightsabers with slight delays
-                setTimeout(() => {
-                    const offsetX = centerX + (Math.random() - 0.5) * 40;
-                    const offsetY = centerY + (Math.random() - 0.5) * 20;
-                    this.createLightsaber(offsetX, offsetY, colors[Math.floor(Math.random() * colors.length)]);
-                }, 150);
-                
-                setTimeout(() => {
-                    const offsetX = centerX + (Math.random() - 0.5) * 30;
-                    const offsetY = centerY + (Math.random() - 0.5) * 15;
-                    this.createLightsaber(offsetX, offsetY, colors[Math.floor(Math.random() * colors.length)]);
-                }, 300);
-            }
-        });
+        // Removed lightsaber effects on clicks to reduce distraction
+        // Users can still use other Star Wars effects like force lightning and blasters
     }
 
     // Toggle effects on/off
