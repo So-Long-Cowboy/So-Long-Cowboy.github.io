@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Freedom Countdown - 29 Hours to Go!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="starwars-effects.css">
@@ -714,10 +717,10 @@
     <audio id="countdown-sound" src="countdown.mp3"></audio>
     
     <!-- Star Wars Effects Script -->
-    <script src="starwars-effects.js"></script>
+    <script src="starwars-effects.js?v=2"></script>
     
     <!-- Star Wars Shooter Game Script -->
-    <script src="starwars-shooter.js"></script>
+    <script src="starwars-shooter.js?v=2"></script>
     
     <!-- Firebase SDK -->
 
@@ -756,6 +759,11 @@
 
     
     <script>
+        // Cache busting - force refresh if needed
+        if (window.location.search.includes('refresh=true')) {
+            window.location.reload(true);
+        }
+        
         // Set target time to July 9th, 2025 at 18:00 (6:00 PM) Sofia time (UTC+3)
         const targetTime = new Date('2025-07-09T18:00:00+03:00');
         
