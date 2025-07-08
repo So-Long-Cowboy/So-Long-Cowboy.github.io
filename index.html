@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freedom Countdown - 29 Hours to Go!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-slow': 'pulse 4s infinite',
+                        'glitch': 'glitch 0.5s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shake': 'shake 0.5s infinite',
+                    },
+                    keyframes: {
+                        glitch: {
+                            '0%, 100%': { transform: 'translate(0)' },
+                            '20%': { transform: 'translate(-2px, 2px)' },
+                            '40%': { transform: 'translate(-2px, -2px)' },
+                            '60%': { transform: 'translate(2px, 2px)' },
+                            '80%': { transform: 'translate(2px, -2px)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-10px)' },
+                            '20%, 40%, 60%, 80%': { transform: 'translateX(10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            overflow: hidden;
+        }
+        
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.3;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(255,0,0,0.1), rgba(0,0,255,0.1));
+            z-index: -1;
+        }
+        
+        .countdown-digit {
+            text-shadow: 0 0 20px currentColor;
+            animation: pulse 2s infinite;
+        }
+        
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .glitch-text {
+            position: relative;
+            animation: glitch 0.5s infinite;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-text::before {
+            animation: glitch 0.3s infinite;
+            color: #ff0000;
+            z-index: -1;
+        }
+        
+        .glitch-text::after {
+            animation: glitch 0.3s infinite reverse;
+            color: #00ffff;
+            z-index: -2;
+        }
+        
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            color: #ffd700;
+            text-shadow: 0 0 30px #ffd700;
+            animation: bounce-slow 1s infinite;
+            z-index: 1000;
+            display: none;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear infinite;
+        }
+        
+        /* Star Wars Crawl */
+        .star-wars-crawl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            perspective: 400px;
+        }
+        
+        .crawl-container {
+            position: absolute;
+            left: 50%;
+            width: 70%;
+            max-width: 800px;
+            text-align: center;
+            cursor: grab;
+            user-select: none;
+            /* Position controlled entirely by JavaScript */
+            transform: translateX(-50%) rotateX(20deg) translateY(100vh);
+        }
+        
+        /* Responsive design for different screen sizes */
+        @media (max-width: 768px) {
+            .crawl-container {
+                width: 85%;
+                max-width: 600px;
+            }
+            
+            .crawl-title {
+                font-size: 2.2rem;
+            }
+            
+            .crawl-text {
+                font-size: 1.4rem;
+                line-height: 2.0;
+            }
+            
+            .chapter {
+                font-size: 2.5rem;
+                margin: 3.5rem 0 2rem 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .crawl-container {
+                width: 90%;
+                max-width: 400px;
+            }
+            
+            .crawl-title {
+                font-size: 1.8rem;
+            }
+            
+            .crawl-text {
+                font-size: 1.2rem;
+                line-height: 1.9;
+            }
+            
+            .chapter {
+                font-size: 2rem;
+                margin: 3rem 0 1.8rem 0;
+            }
+        }
+        
+        .crawl-container:active {
+            cursor: grabbing;
+        }
+        
+        .crawl-container.dragging {
+            animation: none;
+        }
+        
+        .crawl-title {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+        }
+        
+        .crawl-text {
+            font-size: 1.6rem;
+            line-height: 2.2;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            text-align: justify;
+            margin-bottom: 2rem;
+        }
+        
+        .chapter {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+            text-align: center;
+            margin: 4rem 0 2.5rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            border-bottom: 4px solid #ffd700;
+            padding-bottom: 1.5rem;
+        }
+        
+        /* CSS animation removed - using JavaScript for full control */
+        
+        /* Crawl Navigation Buttons */
+        .crawl-nav {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .crawl-btn {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .crawl-btn:hover {
+            background: rgba(255, 215, 0, 0.4);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ffd700;
+        }
+        
+        .crawl-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .crawl-speed {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .crawl-speed-label {
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .crawl-speed-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .main-content {
+            position: relative;
+            z-index: 10;
+            transition: transform 2s ease-in-out;
+        }
+        
+        .main-content.crawl-active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+    <!-- Video Background -->
+    <video class="video-background" autoplay muted loop>
+        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+        <!-- Replace with your video file -->
+    </video>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+    
+    <!-- Particles -->
+    <div id="particles"></div>
+    
+    <!-- Top Left Text -->
+    <div class="fixed top-4 left-4 z-20">
+        <p class="text-lg md:text-xl text-yellow-400 animate-pulse font-bold">
+            Time until I'm OUTTA HERE! 🚀
+        </p>
+    </div>
+    
+    <!-- Top Right Text -->
+    <div class="fixed top-4 right-4 z-20 text-right">
+        <p class="text-lg md:text-xl text-yellow-300 animate-pulse font-bold" id="fun-message">
+            Still here... but not for long! 😅
+        </p>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content relative z-10 min-h-screen flex flex-col items-center p-2">
+        <!-- Title -->
+        <h1 class="text-2xl md:text-4xl font-bold text-center mb-2 glitch-text" data-text="FREEDOM COUNTDOWN">
+            FREEDOM COUNTDOWN
+        </h1>
+        
+        <!-- Countdown Timer -->
+        <div class="grid grid-cols-4 gap-2 md:gap-4 mb-4">
+            <div class="text-center">
+                <div class="countdown-digit text-2xl md:text-4xl font-bold text-red-500" id="hours">29</div>
+                <div class="text-sm md:text-base text-gray-300">HOURS</div>
+            </div>
+            <div class="text-center">
+                <div class="countdown-digit text-2xl md:text-4xl font-bold text-blue-500" id="minutes">00</div>
+                <div class="text-sm md:text-base text-gray-300">MINUTES</div>
+            </div>
+            <div class="text-center">
+                <div class="countdown-digit text-2xl md:text-4xl font-bold text-green-500" id="seconds">00</div>
+                <div class="text-sm md:text-base text-gray-300">SECONDS</div>
+            </div>
+            <div class="text-center">
+                <div class="countdown-digit text-2xl md:text-4xl font-bold text-purple-500" id="milliseconds">00</div>
+                <div class="text-sm md:text-base text-gray-300">MS</div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full max-w-2xl mb-2">
+            <div class="bg-gray-800 rounded-full h-2">
+                <div class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full transition-all duration-1000" id="progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="fixed left-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-4">
+            <button onclick="playSound()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 animate-bounce-slow shadow-lg">
+                🎵 Play Tune
+            </button>
+            <button onclick="createExplosion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 animate-pulse-slow shadow-lg">
+                💥 Explosion!
+            </button>
+        </div>
+        
+        <div class="fixed right-4 top-1/2 transform -translate-y-1/2 z-20">
+            <button onclick="toggleGlitch()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 shadow-lg">
+                🔥 Glitch Mode
+            </button>
+        </div>
+    </div>
+    
+    <!-- Celebration Message -->
+    <div class="celebration" id="celebration">
+        🎉 FREEDOM! 🎉
+    </div>
+    
+    <!-- Star Wars Crawl -->
+    <div class="star-wars-crawl" id="star-wars-crawl">
+        <div class="crawl-container" id="crawl-container">
+            <div class="crawl-title">THE EMPIRE OF EMPLOYMENT</div>
+            
+            <div class="crawl-text">
+                <div class="chapter">PROLOGUE</div>
+                
+                It is a time of great transformation. After exactly 2 years, 7 months, and 9 days of valiant service, our hero stands at the precipice of liberation. The corporate empire, once an impenetrable fortress of routine and regulation, now trembles before the force of change.
+                
+                The journey that led to this moment spans countless meetings, infinite emails, and an uncountable number of coffee cups consumed in the pursuit of productivity. Through the dark times of Monday morning blues and the treacherous waters of Friday afternoon deadlines, our protagonist has emerged stronger, wiser, and with an impressive collection of office supplies.
+                
+                <div class="chapter">CHAPTER I: THE BEGINNING</div>
+                
+                The saga began in the depths of uncertainty, when our hero first stepped through the corporate portal, armed only with hope and a freshly printed resume. The early days were filled with wonder and confusion, as the protagonist navigated the labyrinthine corridors of office politics and the mysterious rituals of team building exercises.
+                
+                The first challenge came in the form of the onboarding process - a seemingly endless series of forms, trainings, and introductions that tested the hero's patience and resolve. Yet through perseverance, the corporate ways were slowly learned, and the first alliances were forged with fellow newcomers who shared the same struggles.
+                
+                The hero discovered the ancient art of "looking busy" while actually planning weekend adventures, the sacred technique of "strategic bathroom breaks" that provided moments of peace in the chaos, and the forbidden knowledge of "reply all" etiquette that could make or break careers. These skills would prove invaluable in the battles to come.
+                
+                <div class="chapter">CHAPTER II: THE DARK TIMES</div>
+                
+                As the months passed, the hero faced the dark forces of corporate reality. Monday morning blues became a constant companion, their grip tightening with each passing week. The treacherous waters of endless meetings that could have been emails threatened to drown the spirit of productivity.
+                
+                The soul-crushing despair of Friday afternoon deadlines loomed like a shadow, casting doubt on the hero's abilities and resolve. Each challenge was met with determination, each obstacle overcome with the wisdom gained from previous battles. The hero learned to navigate the complex web of office politics, understanding that not all allies were true friends, and not all enemies were truly hostile.
+                
+                The coffee machine became both a sanctuary and a battlefield, where alliances were formed over shared complaints about management decisions and where the first whispers of rebellion against the status quo began to spread.
+                
+                <div class="chapter">CHAPTER III: THE ALLIANCES</div>
+                
+                Through the trials and tribulations, our hero discovered the power of true friendship in the workplace. Fellow warriors who shared the same struggles became trusted allies, forming bonds that transcended the daily grind. These relationships provided strength during the darkest moments and joy during the rare victories.
+                
+                Mentors emerged from unexpected places - the quiet developer who had survived their own corporate battles, the experienced project manager who shared wisdom gained through years of navigating office politics, and the friendly HR representative who provided guidance through the maze of corporate policies.
+                
+                The office became a second home, filled with both friends and frenemies, each playing their part in this grand drama. Lunch breaks became strategic planning sessions, where ideas were shared, grievances were aired, and plans for future conquests were hatched.
+                
+                <div class="chapter">CHAPTER IV: THE TRIUMPHS</div>
+                
+                Amidst the challenges, moments of triumph emerged like beacons of hope in the darkness. Successfully debugging code that had haunted the team for weeks brought not just relief, but a sense of accomplishment that fueled the hero's determination.
+                
+                Presenting ideas that actually made sense to management became a rare but satisfying victory, proving that even in the corporate empire, innovation and creativity could find a place. The discovery that the office coffee machine could produce something resembling actual coffee was celebrated as a major breakthrough.
+                
+                These victories, though small, kept the flame of hope alive and reminded the hero that progress was possible, even in the most challenging environments. Each success built confidence and prepared the protagonist for greater challenges ahead.
+                
+                <div class="chapter">CHAPTER V: THE BETRAYALS</div>
+                
+                Not all battles were fought against external forces. The hero faced betrayals from unexpected quarters - colleagues who took credit for shared work, managers who promised promotions that never materialized, and systems that seemed designed to frustrate rather than facilitate.
+                
+                The endless cycle of "we need this done yesterday" became a familiar refrain, testing the hero's patience and resolve. The soul-draining experience of explaining technical concepts to non-technical stakeholders for the 47th time pushed the limits of professional courtesy.
+                
+                The crushing realization that some meetings were scheduled just to schedule more meetings brought moments of existential crisis, forcing the hero to question the very nature of corporate existence. Yet through these betrayals, the protagonist grew stronger and more resilient.
+                
+                <div class="chapter">CHAPTER VI: THE MASTERY</div>
+                
+                As time passed, our hero achieved mastery over the corporate arts. The subtle art of "looking busy" was perfected, allowing the protagonist to maintain productivity while preserving mental energy for more important pursuits. Strategic bathroom breaks became an art form, providing moments of peace and reflection in the midst of chaos.
+                
+                The forbidden knowledge of "reply all" etiquette was mastered, preventing career-ending mistakes and earning the hero a reputation for professional communication. The ability to navigate office politics without losing one's soul became a valuable skill that would serve well in future campaigns.
+                
+                Through it all, the hero maintained a sense of humor and perspective, understanding that while the corporate world was challenging, it was also temporary. This wisdom would prove crucial in the final chapter of this epic saga.
+                
+                <div class="chapter">CHAPTER VII: THE REFLECTION</div>
+                
+                Now, as the final countdown approaches, our hero reflects on the journey that has led to this moment. The skills acquired, the relationships forged, the challenges overcome - all have prepared the protagonist for the next great adventure that lies beyond these office walls.
+                
+                The force of personal growth and professional development has been strong with this one. The time has come to embrace the freedom that awaits, to pursue dreams that have been patiently waiting, and to write the next chapter of this epic saga.
+                
+                The office, once a prison of routine and regulation, has become a training ground for future conquests. The lessons learned here will serve the hero well in whatever adventures lie ahead, whether in new corporate realms or in the pursuit of entrepreneurial dreams.
+                
+                <div class="chapter">CHAPTER VIII: THE LIBERATION</div>
+                
+                As the clock ticks down to liberation, our hero stands ready, not with fear, but with anticipation. For this is not an ending, but a new beginning. The empire of employment has been conquered, and the galaxy of possibilities stretches out before us.
+                
+                The skills acquired through countless meetings and endless emails have prepared the protagonist for whatever challenges lie ahead. The friendships forged in the crucible of corporate life will endure beyond the office walls, providing support and encouragement for future endeavors.
+                
+                The time has come to embrace the freedom that awaits, to pursue dreams that have been patiently waiting, and to write the next chapter of this epic saga. The corporate empire may have been challenging, but it has also been a valuable teacher, preparing our hero for greater adventures.
+                
+                <div class="chapter">EPILOGUE</div>
+                
+                May the freedom be with you, always. The force of personal growth and professional development has been strong with this one, and the lessons learned in the corporate empire will serve as a foundation for future success.
+                
+                As our hero prepares to step into the unknown, we celebrate not just the end of one journey, but the beginning of another. The empire of employment has been conquered, and the galaxy of possibilities stretches out before us, filled with new challenges, new allies, and new adventures waiting to be discovered.
+                
+                The countdown continues, but the story is far from over. This is merely the end of one chapter in an epic saga that spans a lifetime of growth, learning, and achievement. May the freedom be with you, always...
+            </div>
+        </div>
+    </div>
+    
+    <!-- Crawl Navigation -->
+    <div class="crawl-nav">
+        <button class="crawl-btn" onclick="moveCrawlUp()" title="Move Up">⬆️</button>
+        <button class="crawl-btn" onclick="pauseCrawl()" title="Pause/Play" id="pause-btn">⏸️</button>
+        <button class="crawl-btn" onclick="moveCrawlDown()" title="Move Down">⬇️</button>
+        <button class="crawl-btn" onclick="changeCrawlSpeed(1.2)" title="Speed Up">⚡</button>
+        <button class="crawl-btn" onclick="changeCrawlSpeed(0.8)" title="Slow Down">🐌</button>
+        <button class="crawl-btn" onclick="resetCrawl()" title="Reset Position">🔄</button>
+    </div>
+    
+    <!-- Crawl Speed Display -->
+    <div class="crawl-speed">
+        <div class="crawl-speed-label">Speed</div>
+        <div class="crawl-speed-value" id="speed-value">1x</div>
+    </div>
+    
+    <!-- Audio -->
+    <audio id="countdown-sound" src="countdown.mp3"></audio>
+    
+    <script>
+        // Set target time to July 9th, 2025 at 18:00 (6:00 PM) Sofia time (UTC+3)
+        const targetTime = new Date('2025-07-09T18:00:00+03:00');
+        
+        // Fun messages array
+        const funMessages = [
+            "Still here... but not for long! 😅",
+            "Counting down to freedom! 🚀",
+            "Almost there... almost there... 🎯",
+            "The end is near! 🎉",
+            "Freedom awaits! ⚡",
+            "Just a few more hours! 💪",
+            "Breaking free soon! 🔓",
+            "The countdown continues! ⏰",
+            "Almost time to say goodbye! 👋",
+            "Freedom is calling! 📞"
+        ];
+        
+        let glitchMode = false;
+        let messageIndex = 0;
+        
+        // Create particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+        
+        // Update countdown
+        function updateCountdown() {
+            const now = new Date();
+            const timeLeft = targetTime - now;
+            
+            if (timeLeft <= 0) {
+                // Countdown finished!
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                document.getElementById('milliseconds').textContent = '00';
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('fun-message').textContent = "🎉 FREEDOM AT LAST! 🎉";
+                document.getElementById('celebration').style.display = 'block';
+                createConfetti();
+                playSound();
+                return;
+            }
+            
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            const milliseconds = Math.floor((timeLeft % 1000) / 10);
+            
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            document.getElementById('milliseconds').textContent = milliseconds.toString().padStart(2, '0');
+            
+            // Update progress bar
+            const startTime = new Date('2025-07-08T13:00:00+03:00'); // 29 hours before target (Sofia time)
+            const totalTime = targetTime - startTime;
+            const progress = ((totalTime - timeLeft) / totalTime) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            // Update fun message every 30 seconds
+            if (seconds % 30 === 0 && milliseconds === 0) {
+                document.getElementById('fun-message').textContent = funMessages[messageIndex];
+                messageIndex = (messageIndex + 1) % funMessages.length;
+            }
+        }
+        
+        // Play sound
+        function playSound() {
+            const audio = document.getElementById('countdown-sound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('Audio play failed:', e));
+        }
+        
+        // Create explosion effect
+        function createExplosion() {
+            createConfetti();
+            document.body.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 500);
+        }
+        
+        // Toggle glitch mode
+        function toggleGlitch() {
+            glitchMode = !glitchMode;
+            const elements = document.querySelectorAll('.countdown-digit');
+            const button = document.querySelector('button[onclick="toggleGlitch()"]');
+            
+            elements.forEach(el => {
+                if (glitchMode) {
+                    el.style.animation = 'glitch 0.1s infinite';
+                    el.style.textShadow = '0 0 20px currentColor, 2px 0 0 red, -2px 0 0 cyan';
+                } else {
+                    el.style.animation = 'pulse 2s infinite';
+                    el.style.textShadow = '0 0 20px currentColor';
+                }
+            });
+            
+            // Update button text
+            if (glitchMode) {
+                button.innerHTML = '🔥 Glitch Mode ON';
+                button.classList.add('animate-pulse');
+            } else {
+                button.innerHTML = '🔥 Glitch Mode';
+                button.classList.remove('animate-pulse');
+            }
+            
+            // Add some extra glitch effects to the whole page
+            if (glitchMode) {
+                document.body.style.filter = 'hue-rotate(90deg)';
+                setTimeout(() => {
+                    if (glitchMode) document.body.style.filter = 'hue-rotate(180deg)';
+                }, 100);
+                setTimeout(() => {
+                    if (glitchMode) document.body.style.filter = 'hue-rotate(270deg)';
+                }, 200);
+                setTimeout(() => {
+                    if (glitchMode) document.body.style.filter = 'none';
+                }, 300);
+            }
+        }
+        
+        // Crawl control variables
+        let crawlSpeed = 1;
+        let isPaused = true; // Start paused
+        let isDragging = false;
+        let dragStartY = 0;
+        let currentTranslateY = 100; // Start at bottom (100vh)
+        let crawlContainer;
+        let animationId = null; // For requestAnimationFrame
+        
+        // Start Star Wars crawl
+        function startStarWarsCrawl() {
+            const mainContent = document.querySelector('.main-content');
+            mainContent.classList.add('crawl-active');
+        }
+        
+        // Crawl navigation functions
+        function moveCrawlUp() {
+            if (!crawlContainer) {
+                crawlContainer = document.getElementById('crawl-container');
+            }
+            if (crawlContainer) {
+                // Stop any running animation
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                isPaused = true;
+                document.getElementById('pause-btn').innerHTML = '▶️';
+                document.getElementById('pause-btn').title = 'Play';
+                
+                currentTranslateY += 5; // Move up by 5vh
+                updateCrawlPosition();
+                console.log('Moving up, new position:', currentTranslateY, 'vh');
+            } else {
+                console.log('Crawl container not found!');
+            }
+        }
+        
+        function moveCrawlDown() {
+            if (!crawlContainer) {
+                crawlContainer = document.getElementById('crawl-container');
+            }
+            if (crawlContainer) {
+                // Stop any running animation
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                isPaused = true;
+                document.getElementById('pause-btn').innerHTML = '▶️';
+                document.getElementById('pause-btn').title = 'Play';
+                
+                currentTranslateY -= 5; // Move down by 5vh
+                updateCrawlPosition();
+                console.log('Moving down, new position:', currentTranslateY, 'vh');
+            } else {
+                console.log('Crawl container not found!');
+            }
+        }
+        
+        function pauseCrawl() {
+            if (!crawlContainer) {
+                crawlContainer = document.getElementById('crawl-container');
+            }
+            isPaused = !isPaused;
+            const pauseBtn = document.getElementById('pause-btn');
+            
+            if (isPaused) {
+                // Stop animation
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                pauseBtn.innerHTML = '▶️';
+                pauseBtn.title = 'Play';
+                console.log('Animation paused');
+            } else {
+                // Start animation
+                startCrawlAnimation();
+                pauseBtn.innerHTML = '⏸️';
+                pauseBtn.title = 'Pause';
+                console.log('Animation started');
+            }
+        }
+        
+        function startCrawlAnimation() {
+            if (!crawlContainer) return;
+            
+            const startTime = performance.now();
+            const startY = currentTranslateY;
+            const endY = -400; // End at -400vh (off-screen top)
+            const duration = (180 / crawlSpeed) * 1000; // Convert to milliseconds
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                currentTranslateY = startY + (endY - startY) * progress;
+                updateCrawlPosition();
+                
+                if (progress < 1 && !isPaused) {
+                    animationId = requestAnimationFrame(animate);
+                } else if (progress >= 1) {
+                    // Animation complete, reset to beginning
+                    currentTranslateY = 100;
+                    updateCrawlPosition();
+                    isPaused = true;
+                    document.getElementById('pause-btn').innerHTML = '▶️';
+                    document.getElementById('pause-btn').title = 'Play';
+                }
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        function updateCrawlPosition() {
+            if (crawlContainer) {
+                // Use viewport height units for consistent positioning
+                crawlContainer.style.transform = `translateX(-50%) rotateX(20deg) translateY(${currentTranslateY}vh)`;
+                console.log('Position updated to:', currentTranslateY, 'vh');
+            }
+        }
+        
+        function changeCrawlSpeed(factor) {
+            if (!crawlContainer) {
+                crawlContainer = document.getElementById('crawl-container');
+            }
+            crawlSpeed *= factor;
+            crawlSpeed = Math.max(0.1, Math.min(5, crawlSpeed)); // Limit between 0.1x and 5x
+            
+            // If animation is running, restart it with new speed
+            if (!isPaused && animationId) {
+                cancelAnimationFrame(animationId);
+                startCrawlAnimation();
+            }
+            
+            console.log('Speed changed to:', crawlSpeed.toFixed(1) + 'x');
+            document.getElementById('speed-value').textContent = crawlSpeed.toFixed(1) + 'x';
+        }
+        
+        function resetCrawl() {
+            if (!crawlContainer) {
+                crawlContainer = document.getElementById('crawl-container');
+            }
+            if (crawlContainer) {
+                // Stop any running animation
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                
+                // Reset to starting position
+                currentTranslateY = 100; // Start at bottom (100vh)
+                updateCrawlPosition();
+                isPaused = true;
+                document.getElementById('pause-btn').innerHTML = '▶️';
+                document.getElementById('pause-btn').title = 'Play';
+                console.log('Crawl reset to starting position (100vh)');
+            }
+        }
+        
+        // Function to force crawl to beginning regardless of cache
+        function forceCrawlToBeginning() {
+            if (!crawlContainer) {
+                crawlContainer = document.getElementById('crawl-container');
+            }
+            if (crawlContainer) {
+                // Reset to starting position (bottom of screen)
+                currentTranslateY = 100; // 100vh = bottom of screen
+                updateCrawlPosition();
+                isPaused = true;
+                
+                console.log('Crawl forced to beginning - ready to start at 100vh');
+            }
+        }
+        
+        // Initialize crawl controls
+        function initCrawlControls() {
+            crawlContainer = document.getElementById('crawl-container');
+            
+            // Mouse drag events
+            crawlContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                dragStartY = e.clientY - currentTranslateY;
+                crawlContainer.classList.add('dragging');
+                crawlContainer.style.animationPlayState = 'paused';
+                isPaused = true;
+                document.getElementById('pause-btn').innerHTML = '▶️';
+                document.getElementById('pause-btn').title = 'Play';
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    currentTranslateY = e.clientY - dragStartY;
+                    updateCrawlPosition();
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    crawlContainer.classList.remove('dragging');
+                }
+            });
+            
+            // Touch events for mobile
+            crawlContainer.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                dragStartY = e.touches[0].clientY - currentTranslateY;
+                crawlContainer.classList.add('dragging');
+                crawlContainer.style.animationPlayState = 'paused';
+                isPaused = true;
+                document.getElementById('pause-btn').innerHTML = '▶️';
+                document.getElementById('pause-btn').title = 'Play';
+            });
+            
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentTranslateY = e.touches[0].clientY - dragStartY;
+                    updateCrawlPosition();
+                }
+            });
+            
+            document.addEventListener('touchend', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    crawlContainer.classList.remove('dragging');
+                }
+            });
+            
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        moveCrawlUp();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        moveCrawlDown();
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        pauseCrawl();
+                        break;
+                    case '+':
+                    case '=':
+                        e.preventDefault();
+                        changeCrawlSpeed(1.2);
+                        break;
+                    case '-':
+                        e.preventDefault();
+                        changeCrawlSpeed(0.8);
+                        break;
+                }
+            });
+        }
+        
+        // Initialize
+        createParticles();
+        updateCountdown();
+        setInterval(updateCountdown, 10); // Update every 10ms for smooth countdown
+        
+        // Initialize crawl container immediately
+        crawlContainer = document.getElementById('crawl-container');
+        console.log('Crawl container initialized:', crawlContainer);
+        
+        // Force the crawl to start from the bottom position
+        if (crawlContainer) {
+            forceCrawlToBeginning();
+        }
+        
+        // Start the epic Star Wars crawl
+        setTimeout(() => {
+            startStarWarsCrawl();
+            initCrawlControls();
+            
+            // Update the pause button to show the correct state
+            const pauseBtn = document.getElementById('pause-btn');
+            if (pauseBtn) {
+                pauseBtn.innerHTML = '▶️';
+                pauseBtn.title = 'Play';
+            }
+            
+            // Auto-start the crawl after 2 seconds
+            setTimeout(() => {
+                if (isPaused) {
+                    pauseCrawl(); // This will start the animation
+                    console.log('Auto-starting crawl animation');
+                }
+            }, 2000); // Auto-start after 2 more seconds (4 seconds total)
+        }, 2000); // Initialize after 2 seconds
+        
+        // Add some interactivity
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = e.clientX + 'px';
+                particle.style.top = e.clientY + 'px';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.animation = 'float 3s ease-in-out';
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 3000);
+            }
+        });
+    </script>
+</body>
+</html>
