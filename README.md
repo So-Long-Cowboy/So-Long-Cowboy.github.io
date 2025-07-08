@@ -107,19 +107,7 @@ const targetTime = new Date('2025-07-09T18:00:00+03:00');
 
 ## 🔒 Security Considerations
 
-### Firebase Security
-- **API Key Exposure**: Firebase API keys in client-side code are **normal and expected**
-- **Security Rules**: The real security comes from Firestore Security Rules
-- **Rate Limiting**: Implemented to prevent spam and abuse
-- **Validation**: Client and server-side validation for data integrity
-
-### Security Best Practices
-1. **Set up Firestore Security Rules** (see `firebase-security-rules.md`)
-2. **Monitor usage** in Firebase Console
-3. **Use rate limiting** to prevent abuse
-4. **Validate all input** before storing
-
-### Alternative Secure Options
+- **Firebase**: API keys are visible in client-side code (acceptable for this use case)
 - **GitHub Issues**: Personal access tokens should be kept secure
 - **Netlify Functions**: Most secure option, no client-side secrets
 
