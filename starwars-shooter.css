@@ -1,0 +1,496 @@
+/* Star Wars Shooter Game CSS */
+
+/* Game Container */
+.shooter-game {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 200;
+}
+
+.shooter-game.active {
+    pointer-events: all;
+}
+
+/* Crosshair */
+.crosshair {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 1000;
+    display: none;
+}
+
+.crosshair::before,
+.crosshair::after {
+    content: '';
+    position: absolute;
+    background: #ff0000;
+    box-shadow: 0 0 5px #ff0000;
+}
+
+.crosshair::before {
+    width: 2px;
+    height: 20px;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+.crosshair::after {
+    width: 20px;
+    height: 2px;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.shooter-game.active .crosshair {
+    display: block;
+}
+
+/* Targetable Objects */
+.targetable-tie-fighter {
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    background: #333;
+    border-radius: 50%;
+    z-index: 150;
+    cursor: crosshair;
+    transition: all 0.1s ease;
+    animation: tieFlyRandom 8s linear infinite;
+}
+
+.targetable-tie-fighter::before,
+.targetable-tie-fighter::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 8px;
+    background: #333;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.targetable-tie-fighter::before {
+    left: -40px;
+}
+
+.targetable-tie-fighter::after {
+    right: -40px;
+}
+
+.targetable-tie-fighter:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #ff0000;
+}
+
+.targetable-tie-fighter.targeted {
+    box-shadow: 0 0 30px #ff0000;
+    animation-play-state: paused;
+}
+
+.targetable-millennium-falcon {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    background: #666;
+    border-radius: 50% 50% 0 0;
+    z-index: 150;
+    cursor: crosshair;
+    transition: all 0.1s ease;
+    animation: falconFlyRandom 12s linear infinite;
+}
+
+.targetable-millennium-falcon::before {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    background: #444;
+    border-radius: 50% 50% 0 0;
+    top: 5px;
+    left: 10px;
+}
+
+.targetable-millennium-falcon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #ff0000;
+}
+
+.targetable-millennium-falcon.targeted {
+    box-shadow: 0 0 30px #ff0000;
+    animation-play-state: paused;
+}
+
+.targetable-droid {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #0066cc;
+    border-radius: 50%;
+    z-index: 150;
+    cursor: crosshair;
+    transition: all 0.1s ease;
+    animation: droidRollRandom 4s linear infinite;
+}
+
+.targetable-droid::before {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #0066cc;
+    border-radius: 50%;
+    top: 5px;
+    left: 5px;
+    border: 2px solid #fff;
+}
+
+.targetable-droid::after {
+    content: 'R2';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 8px;
+    font-weight: bold;
+}
+
+.targetable-droid:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #ff0000;
+}
+
+.targetable-droid.targeted {
+    box-shadow: 0 0 30px #ff0000;
+    animation-play-state: paused;
+}
+
+/* Random Flight Patterns */
+@keyframes tieFlyRandom {
+    0% {
+        left: -100px;
+        top: 20%;
+        transform: rotate(0deg);
+    }
+    25% {
+        top: 40%;
+        transform: rotate(5deg);
+    }
+    50% {
+        top: 60%;
+        transform: rotate(-5deg);
+    }
+    75% {
+        top: 30%;
+        transform: rotate(3deg);
+    }
+    100% {
+        left: 100vw;
+        top: 50%;
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes falconFlyRandom {
+    0% {
+        left: -100px;
+        top: 30%;
+        transform: rotate(0deg) scale(0.8);
+    }
+    25% {
+        top: 50%;
+        transform: rotate(5deg) scale(1);
+    }
+    50% {
+        top: 70%;
+        transform: rotate(-5deg) scale(1.2);
+    }
+    75% {
+        top: 40%;
+        transform: rotate(3deg) scale(1);
+    }
+    100% {
+        left: 100vw;
+        top: 60%;
+        transform: rotate(0deg) scale(0.8);
+    }
+}
+
+@keyframes droidRollRandom {
+    0% {
+        left: -50px;
+        top: 80%;
+        transform: rotate(0deg);
+    }
+    25% {
+        top: 60%;
+        transform: rotate(90deg);
+    }
+    50% {
+        top: 40%;
+        transform: rotate(180deg);
+    }
+    75% {
+        top: 60%;
+        transform: rotate(270deg);
+    }
+    100% {
+        left: 100vw;
+        top: 80%;
+        transform: rotate(360deg);
+    }
+}
+
+/* Blaster Shot */
+.shooter-blaster-shot {
+    position: absolute;
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(to bottom, #ffffff, #ff0000, #ff6600);
+    border-radius: 2px;
+    box-shadow: 
+        0 0 5px #ff0000,
+        0 0 10px #ff0000,
+        0 0 15px #ff0000;
+    z-index: 1000;
+    pointer-events: none;
+    transform-origin: center;
+    transform: rotate(90deg); /* Make bolts point horizontally by default */
+}
+
+/* Override transform for right-click shots to ensure horizontal travel */
+.shooter-blaster-shot.right-click {
+    transform: rotate(90deg) !important;
+    animation: shooterBlasterTravel 1s linear !important;
+}
+
+.shooter-blaster-shot.red {
+    background: linear-gradient(to bottom, #ffffff, #ff0000, #ff6600);
+    box-shadow: 
+        0 0 5px #ff0000,
+        0 0 10px #ff0000,
+        0 0 15px #ff0000;
+}
+
+.shooter-blaster-shot.blue {
+    background: linear-gradient(to bottom, #ffffff, #0066ff, #00ccff);
+    box-shadow: 
+        0 0 5px #0066ff,
+        0 0 10px #0066ff,
+        0 0 15px #0066ff;
+}
+
+.shooter-blaster-shot.green {
+    background: linear-gradient(to bottom, #ffffff, #00ff00, #66ff00);
+    box-shadow: 
+        0 0 5px #00ff00,
+        0 0 10px #00ff00,
+        0 0 15px #00ff00;
+}
+
+.shooter-blaster-shot.purple {
+    background: linear-gradient(to bottom, #ffffff, #9900ff, #cc66ff);
+    box-shadow: 
+        0 0 5px #9900ff,
+        0 0 10px #9900ff,
+        0 0 15px #9900ff;
+}
+
+@keyframes shooterBlasterTravel {
+    0% {
+        transform: rotate(90deg) translateX(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: rotate(90deg) translateX(50vw) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(90deg) translateX(100vw) scale(0.8);
+        opacity: 0;
+    }
+}
+
+@keyframes shooterBlasterTravelReverse {
+    0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100vw) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* Explosion Effect */
+.explosion {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff6600, #ff0000, #ffff00);
+    animation: explosionEffect 0.6s ease-out;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.explosion::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffff00, #ff6600);
+    top: 10px;
+    left: 10px;
+    animation: explosionInner 0.6s ease-out;
+}
+
+@keyframes explosionEffect {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes explosionInner {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Game UI */
+.shooter-ui {
+    position: fixed;
+    top: 60px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 15px;
+    color: #ffd700;
+    font-family: 'Orbitron', monospace;
+    z-index: 1000;
+    display: none;
+}
+
+.shooter-game.active .shooter-ui {
+    display: block;
+}
+
+.shooter-score {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.shooter-targets {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.shooter-instructions {
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1.4;
+}
+
+/* Game Toggle Button */
+.shooter-toggle {
+    position: fixed;
+    top: 85px;
+    right: 20px;
+    background: rgba(255, 0, 0, 0.8);
+    border: 2px solid #ff0000;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Orbitron', monospace;
+    font-weight: bold;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.shooter-toggle:hover {
+    background: rgba(255, 0, 0, 1);
+    box-shadow: 0 0 10px #ff0000;
+}
+
+.shooter-toggle.active {
+    background: rgba(0, 255, 0, 0.8);
+    border-color: #00ff00;
+}
+
+.shooter-toggle.active:hover {
+    background: rgba(0, 255, 0, 1);
+    box-shadow: 0 0 10px #00ff00;
+}
+
+/* Hit Marker */
+.hit-marker {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ff0000;
+    border-radius: 50%;
+    animation: hitMarkerPulse 0.3s ease-out;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+@keyframes hitMarkerPulse {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .shooter-ui {
+        top: 50px;
+        left: 10px;
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .shooter-toggle {
+        top: 75px;
+        right: 10px;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+} 

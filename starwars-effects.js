@@ -359,12 +359,6 @@ class StarWarsEffects {
 
     // Setup Event Listeners
     setupEventListeners() {
-        // Right click for blaster shots
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            this.createBlasterShot(e.clientX, e.clientY);
-        });
-
         // Space bar for force lightning
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
