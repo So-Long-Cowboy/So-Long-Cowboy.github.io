@@ -476,7 +476,7 @@
 <body class="bg-black text-white min-h-screen">
     <!-- Video Background -->
     <video class="video-background" autoplay muted loop>
-        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+        <!-- <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4"> -->
         <!-- Replace with your video file -->
     </video>
     
@@ -577,7 +577,7 @@
     <!-- Star Wars Crawl -->
     <div class="star-wars-crawl" id="star-wars-crawl">
         <div class="crawl-container" id="crawl-container">
-            <div class="crawl-title">THE EMPIRE OF EMPLOYMENT</div>
+            <div class="crawl-title">THE MICRO-EMPIRE OF FAMILY BUSINESS</div>
             
             <div class="crawl-text">
                 <div class="chapter">PROLOGUE</div>
@@ -714,7 +714,7 @@
     </div>
     
     <!-- Audio -->
-    <audio id="countdown-sound" src="countdown.mp3"></audio>
+    <audio id="countdown-sound" src="countdown.mp3" preload="auto"></audio>
     
     <!-- Star Wars Effects Script -->
     <script src="starwars-effects.js?v=2"></script>
@@ -866,8 +866,101 @@
         // Play sound
         function playSound() {
             const audio = document.getElementById('countdown-sound');
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Debug audio element state
+            console.log('Audio element readyState:', audio.readyState);
+            console.log('Audio element networkState:', audio.networkState);
+            console.log('Audio element error:', audio.error);
+            console.log('Audio element src:', audio.src);
+            
+            // Check if audio is loaded
+            if (audio.readyState < 2) { // HAVE_CURRENT_DATA
+                console.log('Audio not loaded yet, waiting...');
+                audio.addEventListener('canplay', () => {
+                    console.log('Audio can now play');
+                    playAudio();
+                });
+                audio.addEventListener('error', (e) => {
+                    console.log('Audio loading error:', e);
+                    // Start visualizer anyway
+                    if (window.starWarsEffects) {
+                        window.starWarsEffects.startVisualizer();
+                    }
+                });
+                return;
+            }
+            
+            playAudio();
+            
+            function playAudio() {
+                audio.currentTime = 0;
+                
+                // Handle Firefox audio autoplay policies
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Audio started successfully
+                        console.log('Audio started successfully');
+                        
+                        // Start the visualizer animation
+                        if (window.starWarsEffects) {
+                            window.starWarsEffects.startVisualizer();
+                        }
+                    }).catch(e => {
+                        console.log('Audio play failed:', e);
+                        console.log('Error details:', e.name, e.message);
+                        
+                        // Even if audio fails, start fallback visualizer
+                        if (window.starWarsEffects) {
+                            window.starWarsEffects.startVisualizer();
+                        }
+                    });
+                } else {
+                    // Fallback for older browsers
+                    if (window.starWarsEffects) {
+                        window.starWarsEffects.startVisualizer();
+                    }
+                }
+            }
+        }
+        
+        // Global function to start visualizer (for debugging)
+        function startVisualizer() {
+            if (window.starWarsEffects) {
+                window.starWarsEffects.startVisualizer();
+            }
+        }
+        
+        // Global function to stop visualizer (for debugging)
+        function stopVisualizer() {
+            if (window.starWarsEffects) {
+                window.starWarsEffects.stopVisualizer();
+            }
+        }
+        
+        // Test audio context (for debugging)
+        function testAudioContext() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('Audio context created successfully, state:', audioContext.state);
+                return true;
+            } catch (error) {
+                console.log('Audio context creation failed:', error);
+                return false;
+            }
+        }
+        
+        // Test audio file accessibility (for debugging)
+        function testAudioFile() {
+            const audio = document.getElementById('countdown-sound');
+            console.log('=== Audio File Test ===');
+            console.log('Audio src:', audio.src);
+            console.log('Ready state:', audio.readyState);
+            console.log('Network state:', audio.networkState);
+            console.log('Error:', audio.error);
+            console.log('Duration:', audio.duration);
+            console.log('======================');
         }
         
         // Create explosion effect

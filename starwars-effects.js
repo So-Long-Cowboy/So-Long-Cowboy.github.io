@@ -14,7 +14,7 @@ class StarWarsEffects {
         this.createDroids();
         this.createMillenniumFalcon();
         // Removed lightsaber duel to prevent overlap with feedback panel
-        this.createMusicVisualizer();
+        // Visualizer will be created when Play Tune button is pressed
         this.setupEventListeners();
         this.initAudio();
     }
@@ -210,17 +210,186 @@ class StarWarsEffects {
 
     // Create Music Visualizer
     createMusicVisualizer() {
+        // Remove existing visualizer if it exists
+        const existingVisualizer = document.querySelector('.music-visualizer');
+        if (existingVisualizer) {
+            existingVisualizer.remove();
+        }
+        
         const visualizer = document.createElement('div');
         visualizer.className = 'music-visualizer';
+        visualizer.id = 'music-visualizer';
         
-        for (let i = 0; i < 20; i++) {
+        // Create more bars for better audio visualization
+        for (let i = 0; i < 32; i++) {
             const bar = document.createElement('div');
             bar.className = 'visualizer-bar';
-            bar.style.animationDelay = (i * 0.1) + 's';
+            bar.dataset.index = i;
             visualizer.appendChild(bar);
         }
         
         document.body.appendChild(visualizer);
+        return visualizer;
+    }
+
+    // Start visualizer animation with real audio analysis
+    startVisualizer() {
+        const visualizer = document.getElementById('music-visualizer') || this.createMusicVisualizer();
+        const bars = visualizer.querySelectorAll('.visualizer-bar');
+        
+        visualizer.classList.add('active');
+        
+        // Try to get the audio element
+        const audioElement = document.getElementById('countdown-sound');
+        if (!audioElement) {
+            console.log('Audio element not found, using fallback animation');
+            this.startFallbackVisualizer(bars);
+            return;
+        }
+        
+        // Check if audio is actually playing
+        if (audioElement.paused || audioElement.ended) {
+            console.log('Audio not playing, using fallback animation');
+            this.startFallbackVisualizer(bars);
+            return;
+        }
+        
+        // Initialize Web Audio API for real-time analysis
+        console.log('Starting real-time audio visualizer...');
+        this.initAudioVisualizer(audioElement, bars);
+    }
+
+    // Initialize real-time audio visualizer
+    initAudioVisualizer(audioElement, bars) {
+        let audioContext, analyser;
+        
+        try {
+            console.log('Creating audio context...');
+            // Create audio context
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            console.log('Audio context state:', audioContext.state);
+            
+            // Resume audio context if suspended (required for Firefox)
+            if (audioContext.state === 'suspended') {
+                console.log('Resuming suspended audio context...');
+                audioContext.resume();
+            }
+            
+            // Create audio source from the audio element
+            console.log('Creating media element source...');
+            const source = audioContext.createMediaElementSource(audioElement);
+            
+            // Check if the source will output silence due to cross-origin
+            if (audioElement.crossOrigin) {
+                console.log('Cross-origin audio detected, using fallback visualizer');
+                this.startFallbackVisualizer(bars);
+                return;
+            }
+            
+            // Create analyser node
+            console.log('Creating analyser node...');
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 64; // Use 64 frequency bins
+            analyser.smoothingTimeConstant = 0.8;
+            
+            // Connect the audio nodes
+            console.log('Connecting audio nodes...');
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            // Get frequency data
+            const frequencyData = new Uint8Array(analyser.frequencyBinCount);
+            
+            // Animation function
+            const animate = () => {
+                if (!audioElement.paused && !audioElement.ended && audioContext.state === 'running') {
+                    analyser.getByteFrequencyData(frequencyData);
+                    
+                    // Debug: Log first few frequency values
+                    if (Math.random() < 0.01) { // Log only 1% of the time to avoid spam
+                        console.log('Frequency data sample:', frequencyData.slice(0, 5));
+                    }
+                    
+                    // Update each bar based on frequency data
+                    bars.forEach((bar, index) => {
+                        const dataIndex = Math.floor(index * frequencyData.length / bars.length);
+                        const value = frequencyData[dataIndex] || 0;
+                        
+                        // Map frequency value to height (0-255 to 10-50px)
+                        const height = 10 + (value / 255) * 40;
+                        bar.style.height = height + 'px';
+                        
+                        // Add some glow effect based on intensity
+                        const intensity = value / 255;
+                        bar.style.boxShadow = `0 0 ${8 + intensity * 12}px #ffd700`;
+                    });
+                    
+                    requestAnimationFrame(animate);
+                } else {
+                    // Audio stopped, reset bars
+                    console.log('Audio stopped or context not running, resetting bars');
+                    bars.forEach(bar => {
+                        bar.style.height = '10px';
+                        bar.style.boxShadow = '0 0 8px #ffd700';
+                    });
+                }
+            };
+            
+            // Start animation
+            console.log('Starting real-time animation...');
+            animate();
+            
+            // Add a timeout to check if we're getting silence (cross-origin issue)
+            setTimeout(() => {
+                if (audioContext && audioContext.state === 'running' && analyser) {
+                    // Test if we're getting any frequency data
+                    const testData = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(testData);
+                    const hasData = testData.some(value => value > 0);
+                    
+                    if (!hasData) {
+                        console.log('No frequency data detected (likely cross-origin issue), switching to fallback');
+                        this.startFallbackVisualizer(bars);
+                    }
+                }
+            }, 1000);
+            
+        } catch (error) {
+            console.log('Web Audio API error, using fallback:', error);
+            this.startFallbackVisualizer(bars);
+        }
+    }
+
+    // Fallback visualizer for when Web Audio API is not available
+    startFallbackVisualizer(bars) {
+        console.log('Using fallback visualizer animation');
+        bars.forEach((bar, index) => {
+            bar.classList.add('animate');
+            bar.style.animationDelay = (index * 0.05) + 's';
+        });
+        
+        // Ensure the visualizer stays active
+        const visualizer = document.getElementById('music-visualizer');
+        if (visualizer) {
+            visualizer.classList.add('active');
+        }
+    }
+
+    // Stop visualizer animation
+    stopVisualizer() {
+        const visualizer = document.getElementById('music-visualizer');
+        if (visualizer) {
+            const bars = visualizer.querySelectorAll('.visualizer-bar');
+            
+            // Reset all bars to minimum height
+            bars.forEach(bar => {
+                bar.classList.remove('animate');
+                bar.style.height = '10px';
+                bar.style.boxShadow = '0 0 8px #ffd700';
+            });
+            
+            visualizer.classList.remove('active');
+        }
     }
 
     // Create Death Star Progress Bar
@@ -388,11 +557,17 @@ class StarWarsEffects {
     // Toggle effects on/off
     toggleEffects() {
         this.effectsEnabled = !this.effectsEnabled;
-        const elements = document.querySelectorAll('.star-destroyer, .tie-fighter, .droid, .millennium-falcon, .music-visualizer');
+        const elements = document.querySelectorAll('.star-destroyer, .tie-fighter, .droid, .millennium-falcon');
         
         elements.forEach(el => {
             el.style.display = this.effectsEnabled ? 'block' : 'none';
         });
+        
+        // Handle visualizer separately - only hide if it's not currently active
+        const visualizer = document.querySelector('.music-visualizer');
+        if (visualizer && !visualizer.classList.contains('active')) {
+            visualizer.style.display = this.effectsEnabled ? 'block' : 'none';
+        }
         
         return this.effectsEnabled;
     }
