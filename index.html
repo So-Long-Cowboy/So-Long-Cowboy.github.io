@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freedom Countdown - 29 Hours to Go!</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="starwars-effects.css">
     <script>
         tailwind.config = {
             theme: {
@@ -343,6 +344,9 @@
         <p class="text-lg md:text-xl text-yellow-300 animate-pulse font-bold" id="fun-message">
             Still here... but not for long! 😅
         </p>
+        <p class="text-sm text-cyan-400 mt-2">
+            💡 Click buttons for lightsabers • Right-click for blasters • Space for lightning
+        </p>
     </div>
     
     <!-- Main Content -->
@@ -372,8 +376,14 @@
             </div>
         </div>
         
-        <!-- Progress Bar -->
-        <div class="w-full max-w-2xl mb-2">
+        <!-- Death Star Progress Bar -->
+        <div class="death-star-container">
+            <div class="death-star"></div>
+            <div class="death-star-progress" style="--progress: 0deg;"></div>
+        </div>
+        
+        <!-- Original Progress Bar (hidden by default) -->
+        <div class="w-full max-w-2xl mb-2 hidden">
             <div class="bg-gray-800 rounded-full h-2">
                 <div class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full transition-all duration-1000" id="progress-bar"></div>
             </div>
@@ -387,11 +397,20 @@
             <button onclick="createExplosion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 animate-pulse-slow shadow-lg">
                 💥 Explosion!
             </button>
+            <button onclick="createForceLightning()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 shadow-lg">
+                ⚡ Force Lightning
+            </button>
+            <button onclick="toggleStarWarsEffects()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 shadow-lg">
+                🌟 Toggle Effects
+            </button>
         </div>
         
-        <div class="fixed right-4 bottom-4 z-20">
+        <div class="fixed right-4 bottom-4 z-20 flex flex-col gap-4">
             <button onclick="toggleGlitch()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 shadow-lg">
                 🔥 Glitch Mode
+            </button>
+            <button onclick="createHologramMessage()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-110 shadow-lg">
+                📡 Hologram
             </button>
         </div>
     </div>
@@ -507,6 +526,9 @@
     <!-- Audio -->
     <audio id="countdown-sound" src="countdown.mp3"></audio>
     
+    <!-- Star Wars Effects Script -->
+    <script src="starwars-effects.js"></script>
+    
     <script>
         // Set target time to July 9th, 2025 at 18:00 (6:00 PM) Sofia time (UTC+3)
         const targetTime = new Date('2025-07-09T18:00:00+03:00');
@@ -595,6 +617,11 @@
             const progress = ((totalTime - timeLeft) / totalTime) * 100;
             document.getElementById('progress-bar').style.width = progress + '%';
             
+            // Update Death Star progress
+            if (window.starWarsEffects) {
+                window.starWarsEffects.updateDeathStarProgress(targetTime);
+            }
+            
             // Update fun message every 30 seconds
             if (seconds % 30 === 0 && milliseconds === 0) {
                 document.getElementById('fun-message').textContent = funMessages[messageIndex];
@@ -655,6 +682,46 @@
                 setTimeout(() => {
                     if (glitchMode) document.body.style.filter = 'none';
                 }, 300);
+            }
+        }
+        
+        // Star Wars Effects Functions
+        function createForceLightning() {
+            if (window.starWarsEffects) {
+                window.starWarsEffects.createForceLightning();
+            }
+        }
+        
+        function toggleStarWarsEffects() {
+            if (window.starWarsEffects) {
+                const enabled = window.starWarsEffects.toggleEffects();
+                const button = document.querySelector('button[onclick="toggleStarWarsEffects()"]');
+                if (enabled) {
+                    button.innerHTML = '🌟 Effects ON';
+                    button.classList.add('animate-pulse');
+                } else {
+                    button.innerHTML = '🌟 Toggle Effects';
+                    button.classList.remove('animate-pulse');
+                }
+            }
+        }
+        
+        function createHologramMessage() {
+            if (window.starWarsEffects) {
+                const messages = [
+                    "May the Force be with you!",
+                    "Freedom is calling!",
+                    "The countdown continues...",
+                    "Almost there, young padawan!",
+                    "The Empire will fall!",
+                    "Your destiny awaits!",
+                    "The Force is strong with this one!",
+                    "Liberation is near!"
+                ];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const x = Math.random() * (window.innerWidth - 200) + 100;
+                const y = Math.random() * (window.innerHeight - 100) + 50;
+                window.starWarsEffects.createHologramText(message, x, y);
             }
         }
         
