@@ -91,7 +91,6 @@ class StarWarsEffects {
             audio.volume = 0.7;
             audio.play().catch(e => console.log('Lightning audio play failed:', e));
         } catch (e) {
-            console.log('Lightning audio not available, falling back to synthesized sound');
             this.createSynthesizedLightningSound();
         }
     }

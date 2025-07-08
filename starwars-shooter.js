@@ -91,7 +91,6 @@ class StarWarsShooter {
         // Start spawning targets
         this.startSpawning();
         
-        console.log('Shooter game started!');
     }
 
     stopGame() {
@@ -103,7 +102,6 @@ class StarWarsShooter {
         this.stopSpawning();
         this.clearAllTargets();
         
-        console.log('Shooter game stopped!');
     }
 
     startSpawning() {

@@ -991,7 +991,6 @@
                 
                 currentTranslateY += 5; // Move up by 5vh
                 updateCrawlPosition();
-                console.log('Moving up, new position:', currentTranslateY, 'vh');
             } else {
                 console.log('Crawl container not found!');
             }
@@ -1013,7 +1012,6 @@
                 
                 currentTranslateY -= 5; // Move down by 5vh
                 updateCrawlPosition();
-                console.log('Moving down, new position:', currentTranslateY, 'vh');
             } else {
                 console.log('Crawl container not found!');
             }
@@ -1034,13 +1032,11 @@
                 }
                 pauseBtn.innerHTML = '▶️';
                 pauseBtn.title = 'Play';
-                console.log('Animation paused');
             } else {
                 // Start animation
                 startCrawlAnimation();
                 pauseBtn.innerHTML = '⏸️';
                 pauseBtn.title = 'Pause';
-                console.log('Animation started');
             }
         }
         
@@ -1078,7 +1074,6 @@
             if (crawlContainer) {
                 // Use viewport height units for consistent positioning
                 crawlContainer.style.transform = `translateX(-50%) rotateX(15deg) translateY(${currentTranslateY}vh)`;
-                console.log('Position updated to:', currentTranslateY, 'vh');
             }
         }
         
@@ -1095,7 +1090,6 @@
                 startCrawlAnimation();
             }
             
-            console.log('Speed changed to:', crawlSpeed.toFixed(1) + 'x');
             document.getElementById('speed-value').textContent = crawlSpeed.toFixed(1) + 'x';
         }
         
@@ -1116,7 +1110,6 @@
                 isPaused = true;
                 document.getElementById('pause-btn').innerHTML = '▶️';
                 document.getElementById('pause-btn').title = 'Play';
-                console.log('Crawl reset to starting position (100vh)');
             }
         }
         
@@ -1131,7 +1124,6 @@
                 updateCrawlPosition();
                 isPaused = true;
                 
-                console.log('Crawl forced to beginning - ready to start at 100vh');
             }
         }
         
@@ -1225,7 +1217,6 @@
         
         // Initialize crawl container immediately
         crawlContainer = document.getElementById('crawl-container');
-        console.log('Crawl container initialized:', crawlContainer);
         
         // Force the crawl to start from the bottom position
         if (crawlContainer) {
@@ -1248,7 +1239,6 @@
             setTimeout(() => {
                 if (isPaused) {
                     pauseCrawl(); // This will start the animation
-                    console.log('Auto-starting crawl animation');
                 }
             }, 500); // Auto-start after 0.5 seconds (1.5 seconds total)
         }, 1000); // Initialize after 1 second
@@ -1273,7 +1263,6 @@
             try {
                 // Check if Firebase is initialized
                 if (!window.db) {
-                    console.log('Firebase not initialized, using local storage fallback');
                     saveFeedbackLocally(message, emoji);
                     return;
                 }
@@ -1286,7 +1275,6 @@
                     userAgent: navigator.userAgent.substring(0, 100) // Store partial user agent for analytics
                 });
                 
-                console.log("Feedback sent with ID: ", docRef.id);
                 
                 // Show success animation
                 showFeedbackSuccess();
