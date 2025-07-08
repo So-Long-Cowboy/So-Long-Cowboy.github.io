@@ -13,7 +13,7 @@ class StarWarsEffects {
         this.createTieFighters();
         this.createDroids();
         this.createMillenniumFalcon();
-        this.createLightsaberDuel();
+        // Removed lightsaber duel to prevent overlap with feedback panel
         this.createMusicVisualizer();
         this.setupEventListeners();
         this.initAudio();
@@ -389,7 +389,7 @@ class StarWarsEffects {
     // Toggle effects on/off
     toggleEffects() {
         this.effectsEnabled = !this.effectsEnabled;
-        const elements = document.querySelectorAll('.star-destroyer, .tie-fighter, .droid, .millennium-falcon, .lightsaber-duel, .music-visualizer');
+        const elements = document.querySelectorAll('.star-destroyer, .tie-fighter, .droid, .millennium-falcon, .music-visualizer');
         
         elements.forEach(el => {
             el.style.display = this.effectsEnabled ? 'block' : 'none';
